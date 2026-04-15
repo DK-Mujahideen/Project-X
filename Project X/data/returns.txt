@@ -1,0 +1,8 @@
+order_id	return_date	reason	refund_amount	status
+ORD001	2024-01-25	defective	55000	approved
+ORD003	2024-03-18	not satisfied	2500	pending
+ORD005	2024-04-20	damaged	15000	approved
+ORD002	2024-02-28	wrong item	35000	approved
+ORD008	2024-06-12	late delivery	5000	pending
+ORD001	2024-01-26	duplicate	55000	rejected
+ORD010	2024-07-05	defective	52000	approved

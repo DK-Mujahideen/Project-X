@@ -1,0 +1,12 @@
+customer_id,name,email,phone,city,join_date,membership
+1001,Arun Kumar,arun@email.com,9876543210,Mumbai,2024-01-15,Gold
+1011,Arun Kumar,aruna@email.com,9876543210,Mumbai,2024-01-15,Gold
+1002,Priya Sharma,,9876543211,Delhi,2024-02-20,Silver
+1003,Rahul Verma,rahu@email.com,9876543212,Bangalore,2024/03/10,Gold
+1004,Neha Gupta,neha@email.com,9876543213,Chennai,2024-04-15,Platinum
+1005,Amit Singh,amit@email.com,9876543214,Hyderabad,2024-05-01,Silver
+1006,Unknown,sneha@email.com,9876543215,Pune,2024-06-15,Bronze
+1007,Vikram Malhotra,vikram@email.com,9876543216,Kolkata,2024-07-20,Gold
+1008,Divya Reddy,divya@email.com,9876543217,Ahmedabad,2024-08-10,Silver
+1009,Unknown,customer@domain.com,9876543218,Jaipur,2024-09-01,Bronze
+1010,Kavita Nair,kavita@email.com,9876543219,Lucknow,2024-10-15,Silver

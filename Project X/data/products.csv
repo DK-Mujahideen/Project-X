@@ -1,0 +1,14 @@
+[
+    {"order_id": "ORD001", "customer_id": "C1001", "product_id": "P001", "quantity": 1, "price": 55000, "order_date": "2024-01-20", "status": "delivered"},
+    {"order_id": "ORD002", "customer_id": "C1002", "product_id": "P002", "quantity": 1, "price": null, "order_date": "2024-02-25", "status": "delivered"},
+    {"order_id": "ORD003", "customer_id": "C1003", "product_id": "P003", "quantity": 2, "price": 2500, "order_date": "2024-03-15", "status": "pending"},
+    {"order_id": "ORD004", "customer_id": "C1001", "product_id": "P004", "quantity": 3, "price": 1500, "order_date": "2024-01-22", "status": "delivered"},
+    {"order_id": "ORD005", "customer_id": "C1004", "product_id": "P005", "quantity": 1, "price": 15000, "order_date": "2024-04-18", "status": "delivered"},
+    {"order_id": "ORD006", "customer_id": "C1005", "product_id": "P006", "quantity": 1, "price": 3500, "order_date": "2024-05-05", "status": "shipped"},
+    {"order_id": "ORD007", "customer_id": "C1002", "product_id": "P007", "quantity": 1, "price": 28000, "order_date": "2024-02-28", "status": "delivered"},
+    {"order_id": "ORD008", "customer_id": "C1009", "product_id": "P008", "quantity": 2, "price": 5000, "order_date": "2024-06-10", "status": "pending"},
+    {"order_id": "ORD009", "customer_id": "C1003", "product_id": "P009", "quantity": 3, "price": 1200, "order_date": "2024-03-20", "status": "cancelled"},
+    {"order_id": "ORD010", "customer_id": "C1006", "product_id": "P001", "quantity": 1, "price": 52000, "order_date": "2024-07-01", "status": "delivered"},
+    {"order_id": "ORD011", "customer_id": "C1001", "product_id": "P010", "quantity": 2, "price": 8000, "order_date": "2024-08-15", "status": "delivered"},
+    {"order_id": "ORD012", "customer_id": "C1010", "product_id": "P011", "quantity": 1, "price": null, "order_date": "2024-09-20", "status": "pending"}
+]
