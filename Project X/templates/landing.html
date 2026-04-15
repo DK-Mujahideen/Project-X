@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rising Coders | Data Quality Analyzer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .feature-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .btn-next {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-next:hover {
+            transform: translateX(5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* Dark mode styles */
+        body.dark-mode {
+            background: #0f0f1a;
+        }
+        
+        body.dark-mode .bg-white {
+            background-color: #1a1a2e;
+        }
+        
+        body.dark-mode .text-gray-600,
+        body.dark-mode .text-gray-700 {
+            color: #cbd5e1;
+        }
+        
+        body.dark-mode .border-gray-200 {
+            border-color: #2d2d44;
+        }
+        
+        body.dark-mode .bg-gray-50 {
+            background-color: #16162a;
+        }
+        
+        /* Logo animation */
+        .logo-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .logo:hover .logo-icon {
+            transform: rotate(10deg) scale(1.05);
+        }
+        
+        /* Glow effect */
+        .glow {
+            animation: glow 2s ease-in-out infinite;
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(102, 126, 234, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.6); }
+        }
+    </style>
+</head>
+<body class="bg-white transition-all duration-300">
+    <!-- Dark Mode Toggle -->
+    <button onclick="toggleDarkMode()" class="fixed top-6 right-6 bg-white/90 dark:bg-gray-800 shadow-lg p-3 rounded-full transition-all z-50 hover:scale-110">
+        <i class="fas fa-moon text-gray-700 dark:text-yellow-400 text-xl"></i>
+    </button>
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm shadow-sm z-40 transition-all">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Logo -->
+            <div class="logo flex items-center gap-3 cursor-pointer group" onclick="scrollToTop()">
+                <div class="logo-icon w-12 h-12 gradient-bg rounded-xl flex items-center justify-center shadow-lg glow">
+                    <i class="fas fa-code-branch text-white text-2xl"></i>
+                </div>
+                <div>
+                    <span class="font-bold text-xl text-gray-800 dark:text-white">Rising<span class="gradient-text">Coders</span></span>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Data Engineering Team</p>
+                </div>
+            </div>
+            <div class="hidden md:flex gap-8">
+                <a href="#home" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 transition">Home</a>
+                <a href="#features" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 transition">Features</a>
+                <a href="#problem" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 transition">Problem</a>
+                <a href="#team" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 transition">Team</a>
+            </div>
+            <a href="/analyzer" class="gradient-bg text-white px-6 py-2 rounded-full hover:shadow-lg transition-all hover:scale-105">
+                <i class="fas fa-rocket mr-2"></i>Launch App
+            </a>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section id="home" class="pt-32 pb-20 px-6 min-h-screen flex items-center">
+        <div class="container mx-auto">
+            <div class="flex flex-col lg:flex-row items-center gap-12">
+                <div class="flex-1 text-center lg:text-left">
+                    <div class="inline-block gradient-bg rounded-full px-4 py-1 mb-6">
+                        <span class="text-white text-sm font-medium">🚀 Data Quality Solution</span>
+                    </div>
+                    <h1 class="text-5xl lg:text-6xl font-bold text-gray-800 dark:text-white mb-6">
+                        Fix <span class="gradient-text">Fragmented Data</span><br>
+                        & Improve Quality
+                    </h1>
+                    <p class="text-xl text-gray-600 dark:text-gray-300 mb-8">
+                        Upload multiple files, detect duplicates, merge datasets, and get comprehensive quality reports. Built for real-world data challenges.
+                    </p>
+                    
+                    <!-- Next Button -->
+                    <a href="/analyzer" class="btn-next inline-flex items-center gap-3 gradient-bg text-white px-10 py-4 rounded-full font-semibold text-lg shadow-xl transition-all">
+                        <span>Get Started</span>
+                        <i class="fas fa-arrow-right text-xl"></i>
+                    </a>
+                    
+                    <!-- Stats -->
+                    <div class="flex flex-wrap gap-8 mt-12 justify-center lg:justify-start">
+                        <div>
+                            <div class="text-3xl font-bold text-purple-600">8+</div>
+                            <div class="text-sm text-gray-500">File Formats</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-purple-600">100%</div>
+                            <div class="text-sm text-gray-500">Quality Focus</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-purple-600">Real-time</div>
+                            <div class="text-sm text-gray-500">Analysis</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-1 animate-float">
+                    <div class="relative">
+                        <div class="absolute -top-10 -left-10 w-32 h-32 bg-purple-200 rounded-full opacity-50 animate-pulse-slow"></div>
+                        <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-indigo-200 rounded-full opacity-50 animate-pulse-slow"></div>
+                        <img src="https://cdn-icons-png.flaticon.com/512/1055/1055687.png" alt="Data Analysis" class="relative z-10 w-full max-w-md mx-auto">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-gray-50 dark:bg-gray-900/50">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl lg:text-4xl font-bold text-gray-800 dark:text-white mb-4">
+                    Powerful <span class="gradient-text">Features</span>
+                </h2>
+                <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                    Everything you need to transform messy, fragmented data into clean, actionable insights
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="feature-card bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg card-hover">
+                    <div class="feature-icon w-14 h-14 gradient-bg rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-file-alt text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">8+ File Formats</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Upload CSV, Excel, JSON, TXT, XML, HTML, Parquet, and more - all in one place.</p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="feature-card bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg card-hover">
+                    <div class="feature-icon w-14 h-14 gradient-bg rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-code-branch text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Smart Merging</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Automatically detect common keys and merge related datasets from different sources.</p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="feature-card bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg card-hover">
+                    <div class="feature-icon w-14 h-14 gradient-bg rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-chart-line text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Quality Scoring</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Get a 0-100% quality score with detailed metrics on completeness and consistency.</p>
+                </div>
+                
+                <!-- Feature 4 -->
+                <div class="feature-card bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg card-hover">
+                    <div class="feature-icon w-14 h-14 gradient-bg rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-puzzle-piece text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Fragmentation Analysis</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Measure data fragmentation index and identify scattered data patterns.</p>
+                </div>
+                
+                <!-- Feature 5 -->
+                <div class="feature-card bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg card-hover">
+                    <div class="feature-icon w-14 h-14 gradient-bg rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-edit text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">In-Place Editing</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Click any cell to edit data directly. Save changes and download the cleaned version.</p>
+                </div>
+                
+                <!-- Feature 6 -->
+                <div class="feature-card bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg card-hover">
+                    <div class="feature-icon w-14 h-14 gradient-bg rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-chart-pie text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Column Quality Grades</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Each column gets an A-D grade based on missing values and uniqueness.</p>
+                </div>
+            </div>
+            
+            <!-- Next Button after Features -->
+            <div class="text-center mt-12">
+                <a href="/analyzer" class="btn-next inline-flex items-center gap-2 gradient-bg text-white px-8 py-3 rounded-full font-semibold transition-all hover:translate-x-1">
+                    <span>Start Analyzing</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Problem Solved Section -->
+    <section id="problem" class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col lg:flex-row items-center gap-12">
+                <div class="flex-1">
+                    <h2 class="text-3xl lg:text-4xl font-bold text-gray-800 dark:text-white mb-4">
+                        The Problem We <span class="gradient-text">Solve</span>
+                    </h2>
+                    <p class="text-gray-600 dark:text-gray-400 mb-6">
+                        Organizations struggle with fragmented data across multiple systems - CRM, databases, APIs, and spreadsheets. This leads to:
+                    </p>
+                    <ul class="space-y-3">
+                        <li class="flex items-center gap-3">
+                            <i class="fas fa-times-circle text-red-500"></i>
+                            <span class="text-gray-700 dark:text-gray-300">Duplicate records and inconsistent formats</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fas fa-times-circle text-red-500"></i>
+                            <span class="text-gray-700 dark:text-gray-300">Missing values causing analysis errors</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fas fa-times-circle text-red-500"></i>
+                            <span class="text-gray-700 dark:text-gray-300">No single source of truth for decision making</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fas fa-times-circle text-red-500"></i>
+                            <span class="text-gray-700 dark:text-gray-300">Time wasted manually cleaning data</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="flex-1">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+                        <div class="flex items-center gap-3 mb-4">
+                            <i class="fas fa-check-circle text-green-500 text-2xl"></i>
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-white">Our Solution</h3>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">
+                            A unified platform that ingests, cleans, merges, and analyzes data from multiple sources - giving you a complete view of your data quality.
+                        </p>
+                        <div class="gradient-bg rounded-xl p-4 text-white">
+                            <i class="fas fa-quote-left mr-2"></i>
+                            From fragmented data to unified insights in minutes
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Team Section -->
+    <section id="team" class="py-20 bg-gray-50 dark:bg-gray-900/50">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl lg:text-4xl font-bold text-gray-800 dark:text-white mb-4">
+                    Meet <span class="gradient-text">Team Rising Coders</span>
+                </h2>
+                <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                    Passionate developers solving real-world data engineering challenges
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
+                <!-- Team Member 1 -->
+                <div class="text-center group">
+                    <div class="w-32 h-32 mx-auto gradient-bg rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                        <i class="fas fa-user-astronaut text-5xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Arjun</h3>
+                    <p class="text-purple-600 text-sm">Data Engineer</p>
+                </div>
+                
+                <!-- Team Member 2 -->
+                <div class="text-center group">
+                    <div class="w-32 h-32 mx-auto gradient-bg rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                        <i class="fas fa-code text-5xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Mohamed Mujahideen Azad</h3>
+                    <p class="text-purple-600 text-sm">Backend Developer</p>
+                </div>
+                
+                <!-- Team Member 3 -->
+                <div class="text-center group">
+                    <div class="w-32 h-32 mx-auto gradient-bg rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                        <i class="fas fa-palette text-5xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Suhasini</h3>
+                    <p class="text-purple-600 text-sm">Frontend Designer</p>
+                </div>
+                
+                <!-- Team Member 4 -->
+                <div class="text-center group">
+                    <div class="w-32 h-32 mx-auto gradient-bg rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                        <i class="fas fa-database text-5xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Yasir Mufthah Rahman</h3>
+                    <p class="text-purple-600 text-sm">Data Analyst</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Section with Next Button -->
+    <section class="py-20 gradient-bg">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl lg:text-4xl font-bold text-white mb-4">Ready to Clean Your Data?</h2>
+            <p class="text-purple-100 mb-8 max-w-2xl mx-auto">
+                Start analyzing your data quality in minutes. No signup required.
+            </p>
+            <a href="/analyzer" class="inline-flex items-center gap-3 bg-white text-purple-600 px-10 py-4 rounded-full font-semibold text-lg shadow-xl hover:shadow-2xl transition-all hover:scale-105">
+                <span>Launch Analyzer</span>
+                <i class="fas fa-arrow-right text-xl"></i>
+            </a>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="container mx-auto px-6 text-center">
+            <div class="flex justify-center mb-4">
+                <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center">
+                    <i class="fas fa-code-branch text-white"></i>
+                </div>
+            </div>
+            <p class="text-gray-400">Made with <i class="fas fa-heart text-red-500"></i> by <span class="text-purple-400">Team Rising Coders</span></p>
+            <p class="text-gray-500 text-sm mt-2">Data Quality Analyzer - Solving Fragmented Data Systems</p>
+        </div>
+    </footer>
+    
+    <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+            
+            const icon = document.querySelector('.fixed.top-6.right-6 i');
+            if (isDark) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        }
+        
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            const icon = document.querySelector('.fixed.top-6.right-6 i');
+            if (icon) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            }
+        }
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
