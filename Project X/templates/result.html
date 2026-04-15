@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Quality Analyzer - Results</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+        }
+        
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+        
+        body.dark-mode .bg-white {
+            background-color: #1f2937;
+        }
+        
+        body.dark-mode .text-gray-600,
+        body.dark-mode .text-gray-700,
+        body.dark-mode .text-gray-800 {
+            color: #e5e7eb;
+        }
+        
+        body.dark-mode .border-gray-200,
+        body.dark-mode .border-gray-300 {
+            border-color: #374151;
+        }
+        
+        body.dark-mode .data-table td {
+            border-bottom-color: #374151;
+            color: #e5e7eb;
+        }
+        
+        body.dark-mode .data-table tr:hover {
+            background-color: #374151;
+        }
+        
+        body.dark-mode .stat-card {
+            background-color: #1f2937;
+        }
+        
+        body.dark-mode .bg-gray-50 {
+            background-color: #111827;
+        }
+        
+        body.dark-mode .bg-gray-100 {
+            background-color: #374151;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .data-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .data-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .data-table tr:hover {
+            background-color: #f3e8ff;
+            transition: background-color 0.2s;
+        }
+        
+        .stat-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Dark Mode Toggle Button -->
+    <button onclick="toggleDarkMode()" class="fixed top-4 right-4 bg-white/20 hover:bg-white/30 p-3 rounded-full transition-all z-50 backdrop-blur-sm shadow-lg">
+        <i class="fas fa-moon text-white text-xl"></i>
+    </button>
+    
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-white mb-2">
+                <i class="fas fa-chart-line mr-3"></i>Data Quality & Fragmentation Report
+            </h1>
+            <p class="text-white/90">{{ filename }}</p>
+            <p class="text-white/70 text-sm mt-1">File Type: {{ stats.get('file_type', 'CSV') }}</p>
+        </div>
+        
+        <!-- Statistics Cards - Row 1 -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 max-w-6xl mx-auto">
+            <div class="stat-card bg-white rounded-xl shadow-lg p-6 text-center">
+                <i class="fas fa-database text-3xl text-purple-600 mb-2"></i>
+                <div class="text-3xl font-bold text-gray-800">{{ stats.columns }}</div>
+                <div class="text-gray-600 text-sm">Total Columns</div>
+            </div>
+            
+            <div class="stat-card bg-white rounded-xl shadow-lg p-6 text-center">
+                <i class="fas fa-table text-3xl text-blue-600 mb-2"></i>
+                <div class="text-3xl font-bold text-gray-800">{{ stats.original_rows }}</div>
+                <div class="text-gray-600 text-sm">Original Rows</div>
+            </div>
+            
+            <div class="stat-card bg-white rounded-xl shadow-lg p-6 text-center">
+                <i class="fas fa-check-circle text-3xl text-green-600 mb-2"></i>
+                <div class="text-3xl font-bold text-gray-800">{{ stats.cleaned_rows }}</div>
+                <div class="text-gray-600 text-sm">Cleaned Rows</div>
+            </div>
+            
+            <div class="stat-card bg-white rounded-xl shadow-lg p-6 text-center">
+                <i class="fas fa-trash text-3xl text-red-600 mb-2"></i>
+                <div class="text-3xl font-bold text-gray-800">{{ stats.duplicates_removed }}</div>
+                <div class="text-gray-600 text-sm">Duplicates Removed</div>
+            </div>
+        </div>
+        
+        <!-- Quality Score & Fragmentation Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 max-w-6xl mx-auto">
+            <div class="stat-card bg-white rounded-xl shadow-lg p-6 text-center">
+                <i class="fas fa-chart-line text-3xl text-green-600 mb-2"></i>
+                <div class="text-3xl font-bold text-gray-800">{{ "%.1f"|format(stats.quality_score) }}%</div>
+                <div class="text-gray-600 text-sm">Data Quality Score</div>
+                <div class="inline-block mt-2 px-3 py-1 rounded-full text-xs font-semibold
+                    {% if stats.quality_score >= 80 %}bg-green-100 text-green-700
+                    {% elif stats.quality_score >= 60 %}bg-yellow-100 text-yellow-700
+                    {% else %}bg-red-100 text-red-700{% endif %}">
+                    {{ stats.quality_level }}
+                </div>
+            </div>
+            
+            <div class="stat-card bg-white rounded-xl shadow-lg p-6 text-center">
+                <i class="fas fa-puzzle-piece text-3xl text-orange-600 mb-2"></i>
+                <div class="text-3xl font-bold text-gray-800">{{ "%.1f"|format(stats.fragmentation_index) }}%</div>
+                <div class="text-gray-600 text-sm">Fragmentation Index</div>
+                <div class="text-xs text-gray-500 mt-1">
+                    {% if stats.fragmentation_index < 30 %}
+                        Low Fragmentation ✓
+                    {% elif stats.fragmentation_index < 60 %}
+                        Moderate Fragmentation
+                    {% else %}
+                        High Fragmentation ⚠
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Data Quality Metrics -->
+        <div class="max-w-6xl mx-auto mb-8">
+            <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+                <div class="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white">
+                        <i class="fas fa-chart-pie mr-2"></i>Data Quality Metrics
+                    </h2>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <!-- Completeness -->
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-gray-700 font-medium">Data Completeness</span>
+                                <span class="text-gray-600">{{ "%.1f"|format(stats.completeness) }}%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <div class="bg-green-500 h-2.5 rounded-full transition-all" style="width: {{ stats.completeness }}%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">{{ stats.missing_values_filled }} missing values filled</p>
+                        </div>
+                        
+                        <!-- Consistency -->
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-gray-700 font-medium">Data Consistency</span>
+                                <span class="text-gray-600">{{ "%.1f"|format(stats.consistency) }}%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <div class="bg-blue-500 h-2.5 rounded-full transition-all" style="width: {{ stats.consistency }}%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">{{ stats.inconsistent_types }} inconsistent data types detected</p>
+                        </div>
+                        
+                        <!-- Uniqueness -->
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-gray-700 font-medium">Data Uniqueness</span>
+                                <span class="text-gray-600">{{ "%.1f"|format(stats.uniqueness) }}%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <div class="bg-yellow-500 h-2.5 rounded-full transition-all" style="width: {{ stats.uniqueness }}%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">{{ stats.cleaned_rows }} unique records</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Column Quality Analysis -->
+        <div class="max-w-6xl mx-auto mb-8">
+            <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+                <div class="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white">
+                        <i class="fas fa-columns mr-2"></i>Column Quality Analysis
+                    </h2>
+                </div>
+                <div class="overflow-x-auto p-6">
+                    <table class="min-w-full">
+                        <thead>
+                            <tr class="border-b border-gray-200">
+                                <th class="text-left py-2 px-3 font-semibold text-gray-700">Column Name</th>
+                                <th class="text-left py-2 px-3 font-semibold text-gray-700">Data Type</th>
+                                <th class="text-left py-2 px-3 font-semibold text-gray-700">Missing %</th>
+                                <th class="text-left py-2 px-3 font-semibold text-gray-700">Unique %</th>
+                                <th class="text-left py-2 px-3 font-semibold text-gray-700">Quality Grade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for col in stats.column_quality %}
+                            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                <td class="py-2 px-3 text-gray-700 font-medium">{{ col.name }}</td>
+                                <td class="py-2 px-3">
+                                    <span class="px-2 py-1 rounded-full text-xs font-semibold
+                                        {% if col.type == 'numeric' %}bg-blue-100 text-blue-700
+                                        {% elif col.type == 'datetime' %}bg-green-100 text-green-700
+                                        {% else %}bg-purple-100 text-purple-700{% endif %}">
+                                        <i class="fas 
+                                            {% if col.type == 'numeric' %}fa-calculator
+                                            {% elif col.type == 'datetime' %}fa-calendar
+                                            {% else %}fa-font{% endif %} mr-1"></i>
+                                        {{ col.type }}
+                                    </span>
+                                </td>
+                                <td class="py-2 px-3">
+                                    <div class="flex items-center">
+                                        <span class="text-gray-700 mr-2">{{ "%.1f"|format(col.missing_pct) }}%</span>
+                                        <div class="w-16 bg-gray-200 rounded-full h-1.5">
+                                            <div class="bg-red-500 h-1.5 rounded-full" style="width: {{ col.missing_pct }}%"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-2 px-3">{{ "%.1f"|format(col.unique_pct) }}%</td>
+                                <td class="py-2 px-3">
+                                    <span class="inline-block w-8 h-8 leading-8 text-center rounded-full font-bold text-sm
+                                        {% if col.grade == 'A' %}bg-green-500 text-white
+                                        {% elif col.grade == 'B' %}bg-blue-500 text-white
+                                        {% elif col.grade == 'C' %}bg-yellow-500 text-white
+                                        {% else %}bg-red-500 text-white{% endif %}">
+                                        {{ col.grade }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Data Preview with Search -->
+        <div class="max-w-7xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+                <div class="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4 flex flex-wrap justify-between items-center gap-3">
+                    <h2 class="text-xl font-bold text-white">
+                        <i class="fas fa-table mr-2"></i>Cleaned Data Preview
+                    </h2>
+                    <div class="flex gap-3 flex-wrap">
+                        <button onclick="exportAsCSV()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-all">
+                            <i class="fas fa-download mr-2"></i>Download CSV
+                        </button>
+                        <button onclick="window.print()" class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-all">
+                            <i class="fas fa-print mr-2"></i>Print
+                        </button>
+                        <a href="/" class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-all">
+                            <i class="fas fa-arrow-left mr-2"></i>New Upload
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="p-4 border-b border-gray-200">
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" id="searchInput" placeholder="Search in table..." 
+                               class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all">
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2" id="rowCount"></p>
+                </div>
+                
+                <div class="overflow-x-auto p-6" style="max-height: 500px; overflow-y: auto;">
+                    {{ table_html | safe }}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recommendations -->
+        {% if stats.needs_improvement %}
+        <div class="max-w-6xl mx-auto mt-8">
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 rounded-lg p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-triangle text-yellow-400 text-xl"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-yellow-700">
+                            <strong>Recommendations for Improvement:</strong>
+                            {% if stats.fragmentation_index > 50 %}
+                            • High data fragmentation detected. Consider consolidating data sources.<br>
+                            {% endif %}
+                            {% if stats.completeness < 80 %}
+                            • Low data completeness. Implement required field constraints.<br>
+                            {% endif %}
+                            {% if stats.duplicates_removed > 0 %}
+                            • Duplicate records found. Add unique key constraints.<br>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Team Rising Coders Footer -->
+        <div class="text-center mt-8">
+            <div class="inline-block bg-white/10 backdrop-blur-sm rounded-full px-6 py-3">
+                <p class="text-white font-medium">
+                    <i class="fas fa-chart-line mr-2"></i>
+                    Data Quality Report by 
+                    <span class="font-bold text-yellow-300">Team Rising Coders</span>
+                </p>
+            </div>
+        </div>
+        
+        <!-- Footer Note -->
+        <div class="text-center mt-4 text-white/70 text-sm">
+            <i class="fas fa-info-circle mr-1"></i> Missing values have been filled with "Unknown" • Duplicate rows removed • Quality analysis complete
+        </div>
+    </div>
+    
+    <script>
+        // Dark Mode Toggle Function
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            var isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+            
+            var icon = document.querySelector('.fixed.top-4.right-4 i');
+            if (icon) {
+                if (isDark) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                } else {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+            }
+        }
+        
+        // Check for saved dark mode preference on page load
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            var icon = document.querySelector('.fixed.top-4.right-4 i');
+            if (icon) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            }
+        }
+        
+        // Search functionality
+        var searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function() {
+                var searchText = this.value.toLowerCase();
+                var table = document.querySelector('.data-table');
+                if (!table) return;
+                
+                var rows = table.querySelectorAll('tbody tr');
+                var visibleCount = 0;
+                
+                for (var i = 0; i < rows.length; i++) {
+                    var text = rows[i].innerText.toLowerCase();
+                    if (text.indexOf(searchText) !== -1) {
+                        rows[i].style.display = '';
+                        visibleCount++;
+                    } else {
+                        rows[i].style.display = 'none';
+                    }
+                }
+                
+                var rowCountSpan = document.getElementById('rowCount');
+                if (rowCountSpan) {
+                    rowCountSpan.textContent = 'Showing ' + visibleCount + ' of ' + rows.length + ' rows';
+                }
+            });
+        }
+        
+        // Export to CSV function
+        function exportAsCSV() {
+            var table = document.querySelector('.data-table');
+            if (!table) {
+                alert('No table data to export');
+                return;
+            }
+            
+            var csv = [];
+            var rows = table.querySelectorAll('tr');
+            
+            for (var i = 0; i < rows.length; i++) {
+                var cells = rows[i].querySelectorAll('th, td');
+                var rowData = [];
+                for (var j = 0; j < cells.length; j++) {
+                    var text = cells[j].innerText;
+                    if (text.indexOf(',') !== -1 || text.indexOf('"') !== -1 || text.indexOf('\n') !== -1) {
+                        text = '"' + text.replace(/"/g, '""') + '"';
+                    }
+                    rowData.push(text);
+                }
+                csv.push(rowData.join(','));
+            }
+            
+            var blob = new Blob([csv.join('\n')], { type: 'text/csv;charset=utf-8;' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'data_quality_report.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        // Keyboard shortcut for search (Ctrl+F)
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                e.preventDefault();
+                var searchInputElem = document.getElementById('searchInput');
+                if (searchInputElem) {
+                    searchInputElem.focus();
+                }
+            }
+        });
+        
+        // Update row count on load
+        window.addEventListener('load', function() {
+            var table = document.querySelector('.data-table');
+            if (table) {
+                var rows = table.querySelectorAll('tbody tr');
+                var rowCountSpan = document.getElementById('rowCount');
+                if (rowCountSpan) {
+                    rowCountSpan.textContent = 'Showing ' + rows.length + ' of ' + rows.length + ' rows';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

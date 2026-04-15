@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Cleaner Pro - Data Quality Analyzer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+        
+        body.dark-mode .bg-white {
+            background-color: #1f2937;
+        }
+        
+        body.dark-mode .text-gray-600,
+        body.dark-mode .text-gray-700,
+        body.dark-mode .text-gray-800 {
+            color: #e5e7eb;
+        }
+        
+        body.dark-mode .border-gray-200,
+        body.dark-mode .border-gray-300 {
+            border-color: #374151;
+        }
+        
+        body.dark-mode .drop-zone {
+            background-color: #1f2937;
+            border-color: #4b5563;
+        }
+        
+        body.dark-mode .text-gray-400 {
+            color: #9ca3af;
+        }
+        
+        .drop-zone {
+            border: 2px dashed #cbd5e1;
+            transition: all 0.3s ease;
+        }
+        
+        .drop-zone.drag-over {
+            border-color: #667eea;
+            background-color: #f3e8ff;
+            transform: scale(0.98);
+        }
+        
+        body.dark-mode .drop-zone.drag-over {
+            background-color: #374151;
+            border-color: #8b5cf6;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Dark Mode Toggle Button -->
+    <button onclick="toggleDarkMode()" class="fixed top-4 right-4 bg-white/20 hover:bg-white/30 p-3 rounded-full transition-all z-50 backdrop-blur-sm shadow-lg">
+        <i class="fas fa-moon text-white text-xl"></i>
+    </button>
+    
+    <div class="container mx-auto px-4 py-12">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <div class="inline-block p-3 bg-white/20 rounded-full mb-4">
+                <i class="fas fa-chart-line text-5xl text-white"></i>
+            </div>
+            <h1 class="text-5xl font-bold text-white mb-2">Data Quality Analyzer</h1>
+            <p class="text-white/90 text-lg">Upload, analyze, and improve your data quality</p>
+        </div>
+        
+        <!-- Main Card -->
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+                <div class="bg-gradient-to-r from-purple-600 to-indigo-600 px-8 py-6">
+                    <h2 class="text-2xl font-bold text-white">
+                        <i class="fas fa-upload mr-2"></i>Upload Your File
+                    </h2>
+                    <p class="text-purple-100 mt-1">Supports CSV, Excel, JSON, TXT, and more</p>
+                </div>
+                
+                <div class="p-8">
+                    <form id="uploadForm" action="/" method="POST" enctype="multipart/form-data">
+                        <div id="dropZone" class="drop-zone rounded-xl border-2 border-dashed border-gray-300 p-12 text-center cursor-pointer hover:border-purple-500 transition-all">
+                            <i class="fas fa-cloud-upload-alt text-6xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-600 text-lg mb-2">Drag & drop your file here</p>
+                            <p class="text-gray-400 text-sm mb-4">or</p>
+                            <label class="cursor-pointer">
+                                <span class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all inline-block">
+                                    <i class="fas fa-folder-open mr-2"></i>Browse Files
+                                </span>
+                                <input type="file" name="file" id="fileInput" class="hidden" 
+                                       accept=".csv,.xlsx,.xls,.json,.txt,.tsv,.parquet,.xml,.html">
+                            </label>
+                            <p id="fileName" class="mt-4 text-sm text-gray-500"></p>
+                        </div>
+                        
+                        <!-- Supported formats info -->
+                        <div class="mt-4 text-center">
+                            <div class="flex flex-wrap justify-center gap-2 text-xs text-gray-500">
+                                <span class="px-2 py-1 bg-gray-100 rounded-full">CSV</span>
+                                <span class="px-2 py-1 bg-gray-100 rounded-full">Excel (.xlsx, .xls)</span>
+                                <span class="px-2 py-1 bg-gray-100 rounded-full">JSON</span>
+                                <span class="px-2 py-1 bg-gray-100 rounded-full">TXT</span>
+                                <span class="px-2 py-1 bg-gray-100 rounded-full">TSV</span>
+                                <span class="px-2 py-1 bg-gray-100 rounded-full">Parquet</span>
+                                <span class="px-2 py-1 bg-gray-100 rounded-full">XML</span>
+                                <span class="px-2 py-1 bg-gray-100 rounded-full">HTML</span>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" id="submitBtn" disabled class="w-full mt-6 bg-gray-300 text-gray-500 py-3 rounded-lg font-semibold transition-all cursor-not-allowed">
+                            <i class="fas fa-chart-line mr-2"></i>Analyze Data Quality
+                        </button>
+                    </form>
+                    
+                    <!-- Features -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-8 pt-6 border-t border-gray-200">
+                        <div class="text-center">
+                            <i class="fas fa-chart-pie text-purple-600 text-2xl mb-2"></i>
+                            <p class="text-sm text-gray-600">Quality Score</p>
+                        </div>
+                        <div class="text-center">
+                            <i class="fas fa-trash-alt text-purple-600 text-2xl mb-2"></i>
+                            <p class="text-sm text-gray-600">Remove Duplicates</p>
+                        </div>
+                        <div class="text-center">
+                            <i class="fas fa-fill-drip text-purple-600 text-2xl mb-2"></i>
+                            <p class="text-sm text-gray-600">Fill Missing Values</p>
+                        </div>
+                        <div class="text-center">
+                            <i class="fas fa-puzzle-piece text-purple-600 text-2xl mb-2"></i>
+                            <p class="text-sm text-gray-600">Fragmentation Analysis</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Team Rising Coders Footer -->
+        <div class="text-center mt-8">
+            <div class="inline-block bg-white/10 backdrop-blur-sm rounded-full px-6 py-3">
+                <p class="text-white font-medium">
+                    <i class="fas fa-code-branch mr-2"></i>
+                    Made with <i class="fas fa-heart text-red-400 mx-1"></i> by 
+                    <span class="font-bold text-yellow-300">Team Rising Coders</span>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg p-8 text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+            <p class="text-gray-700">Processing your file...</p>
+            <p class="text-sm text-gray-500 mt-2">This may take a few moments</p>
+            <div class="w-64 bg-gray-200 rounded-full mt-4">
+                <div id="progressBar" class="bg-purple-600 text-xs font-medium text-white text-center p-0.5 leading-none rounded-full" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const fileName = document.getElementById('fileName');
+        
+        // Dark Mode Toggle Function
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+            
+            const icon = document.querySelector('.fixed.top-4.right-4 i');
+            if (isDark) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        }
+        
+        // Check for saved dark mode preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            const icon = document.querySelector('.fixed.top-4.right-4 i');
+            if (icon) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            }
+        }
+        
+        // Drag and drop handlers
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+        
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-over');
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                fileInput.files = e.dataTransfer.files;
+                updateFileName(file.name);
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files[0]) {
+                updateFileName(e.target.files[0].name);
+            }
+        });
+        
+        function updateFileName(name) {
+            const fileExt = name.split('.').pop().toLowerCase();
+            const supportedExts = ['csv', 'xlsx', 'xls', 'json', 'txt', 'tsv', 'parquet', 'xml', 'html'];
+            
+            if (supportedExts.includes(fileExt)) {
+                fileName.innerHTML = `<i class="fas fa-check-circle text-green-500"></i> Selected: ${name}`;
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('bg-gray-300', 'cursor-not-allowed');
+                submitBtn.classList.add('bg-gradient-to-r', 'from-purple-600', 'to-indigo-600', 'hover:shadow-lg', 'text-white', 'cursor-pointer');
+            } else {
+                fileName.innerHTML = `<i class="fas fa-exclamation-circle text-red-500"></i> Unsupported file type: ${fileExt}`;
+                submitBtn.disabled = true;
+                submitBtn.classList.add('bg-gray-300', 'cursor-not-allowed');
+                submitBtn.classList.remove('bg-gradient-to-r', 'from-purple-600', 'to-indigo-600', 'hover:shadow-lg', 'text-white');
+            }
+        }
+        
+        // Form submission with loading state
+        document.getElementById('uploadForm').addEventListener('submit', () => {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+            
+            // Animate progress bar
+            let width = 0;
+            const interval = setInterval(() => {
+                if (width >= 90) {
+                    clearInterval(interval);
+                } else {
+                    width += 10;
+                    document.getElementById('progressBar').style.width = width + '%';
+                }
+            }, 200);
+        });
+    </script>
+</body>
+</html>
