@@ -1,0 +1,7 @@
+flask
+pandas
+openpyxl
+xlrd
+lxml
+beautifulsoup4
+pyarrow
